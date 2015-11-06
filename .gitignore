@@ -1,1 +1,5 @@
-*.pyc
+*/*.pyc
+*/*.log
+*/*.aux
+*/*.synctex
+*/*.png
