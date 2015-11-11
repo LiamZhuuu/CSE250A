@@ -1,4 +1,5 @@
-from math import log
+from math import log, exp
+
 def readArrayFile(filename):
     file = open(filename, 'r')
     num = []
@@ -39,12 +40,19 @@ def EM(X, Y, p):
         tmp[i] /= count[i]
     return tmp
 
-p = [0.5]*10
-X = readArrayFile('X.txt')
-Y = readArrayFile('Y.txt')
-index = [0,1,2,4,8,16,32,64]
-for i in range(65):
-    if i in index:
-        print logLikelihood(X, Y, p)
-    p = EM(X, Y, p)
+def hw5_2():
+    p = [0.5]*10
+    X = readArrayFile('X.txt')
+    Y = readArrayFile('Y.txt')
+    index = [0,1,2,4,8,16,32,64]
+    for i in range(65):
+        if i in index:
+            print logLikelihood(X, Y, p)
+        p = EM(X, Y, p)
 
+def hw5_3_f(x):
+    for i in range(20):
+        print x
+        x = x - (exp(2*x)-1.0)/(exp(2*x)+1.0)
+
+hw5_3_f(3)
