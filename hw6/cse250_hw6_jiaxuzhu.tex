@@ -1,0 +1,172 @@
+\documentclass{article}
+\usepackage[left=3cm,right=3cm,top=2cm,bottom=2cm]{geometry} % page settings
+\usepackage{amsmath} % provides many mathematical environments & tools
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{mathtools}
+\usepackage{textcomp}
+
+\setlength{\parindent}{0mm}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+\def\BState{\State\hskip-\ALG@thistlm}
+
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\begin{document}
+
+\title{CSE 250A: Assignment 5}
+\author{Jiaxu Zhu~~A53094655}
+\date{\today}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{5.1 EM algorithm}
+\subparagraph*{(a)~Posterior probability}
+\begin{eqnarray*}
+	P(a,c|b,d) &=& \frac{P(a,c,b,d)}{P(b,d)}\\
+	&=&\frac{P(a,c,b,d)}{\sum_{a',c'}P(a',b,c',d)}\\
+	&=&\frac{P(a)P(b|a)P(c|a,b)P(d|b,c)}{\sum_{a',c'}P(a')P(b|a')P(c'|a',b)P(d|b,c')}
+\end{eqnarray*}
+
+\subparagraph*{(b)~Posterior probability}
+\begin{eqnarray*}
+	P(a|b,d) &=& \sum_{c'}P(a,c'|b,d)\\
+	P(c|b,d) &=& \sum_{a'}P(a',c|b,d)\\ 
+\end{eqnarray*}
+
+\subparagraph*{(c)~Log-likelihood}
+\begin{eqnarray*}
+	\mathcal{L} &=& \sum_{t}\log P(B = b_t, D = d_t)\\
+	&=& \sum_{t}\log \sum_{a', c'}P(A = a', B = b_t, C = c', D = d_t)\\
+	&=& \sum_{t}\log \sum_{a',c'}P(A=a')P(B=b_t|A=a')P(C=c'|A=a',B=b_t)P(D=d_t|B=b_t,C=c')
+\end{eqnarray*}
+
+\subparagraph*{(d)~EM algorithm}
+\subparagraph*{E-step}
+\begin{eqnarray*}
+	P(b,a|b_t, d_t) &=& I(b, b_t)P(a|b_t, d_t)\\
+	P(c, a, b | b_t, d_t) &=& I(b, b_t)P(a, c|b_t, d_t)\\
+	P(d, b, c | b_t, d_t) &=& I(b, b_t)I(d, d_t)P(c|b_t, d_t)\\
+\end{eqnarray*}
+\subparagraph*{M-step}
+\begin{eqnarray*}
+	P(b | a) &=& \frac{\sum_{t}P(b, a|b_t, d_t)}{\sum_{t}P(a|b_t, d_t)}\\
+	&=& \frac{\sum_{t}I(b, b_t)P(a|b_t, d_t)}{\sum_{t}P(a|b_t, d_t)}\\
+	P(c, a, b | b_t, d_t) &=& \frac{\sum_{t}P(c, b, a|b_t, d_t)}{\sum_{t}P(a, b|b_t, d_t)}\\
+	&=& \frac{\sum_{t}I(b, b_t)P(a, c|b_t, d_t)}{\sum_{t}I(b, b_t)P(a|b_t, d_t)}\\
+	P(d, b, c | b_t, d_t) &=& \frac{\sum_{t}P(d, c, b|b_t, d_t)}{\sum_{t}P(b, c|b_t, d_t)}\\
+	&=& \frac{\sum_{t}I(b, b_t)I(d, d_t)P(c|b_t, d_t)}{\sum_{t}I(b, b_t)P(c|b_t, d_t)}\\
+\end{eqnarray*}
+
+\subsection*{5.2 EM algorithm for noisy-OR}
+\subparagraph*{(a)}
+\begin{eqnarray*}
+	P(Y = 1| X) &=& \sum_{Z \in \{0,1\}^n}P(Y =1 ,Z | X)\\	
+	&=& \sum_{Z \in \{0,1\}^n}P(Y =1 |Z , X) P(Z|X)\\
+	&=& \sum_{Z \in \{0,1\}^n}P(Y=1|Z)P(Z|X)~~(d-separation~~\RNum{1})\\
+	&=& \sum_{Z \in \{0,1\}^n}P(Y=1|Z)\prod_{i=1}^{n}P(Z_i|X_i)~~(d-separation~~\RNum{3})\\
+	&=& 1- \sum_{Z \in \{0,1\}^n}P(Y=0|Z)\prod_{i=1}^{n}P(Z_i|X_i)~~(d-separation~~\RNum{3})\\
+	&=& 1- P(Y=0|Z=\vec{0})\prod_{i=1}^{n}P(Z_i=0|X_i)\\
+	&=& 1 - \prod_{i=1}^{n}(1-p_i)^{X_i}
+\end{eqnarray*}
+
+\subparagraph*{(b)}
+\begin{eqnarray*}
+	P(Z_i = 1, X_i = 1| X=x, Y=y) &=& P(x_i = 1)P(Z_i = 1|X=x, Y=y)\\
+	&=& x_i \frac{P(Y=y|X=x, Z_i = 1)P(Z_i = 1|X=x)}{P(Y=y|X=x)}\\
+	&=& \frac{y x_i p_i}{1 - \prod_{i=1}^{n}(1-p_i)^{X_i}}
+\end{eqnarray*}
+
+\subparagraph*{(c)}
+\begin{eqnarray*}
+	p_i &=& \frac{\sum_{t}P(Z_i=1, X_i=1| X=x^{(t)}, Y=y^{(t)})}{\sum_{t}P(X_i=1| X=x^{(t)}, Y=y^{(t)})}\\
+	&=& \frac{\sum_{t}P(Z_i=1, X_i=1| X=x^{(t)}, Y=y^{(t)})}{\sum_{t}P(X_i=1)}\\
+	&=& \frac{1}{T_i}\sum_{t}P(Z_i=1, X_i=1| X=x^{(t)}, Y=y^{(t)})
+\end{eqnarray*}
+where $T_i$ is the number of examples in which $X_i=1$.
+
+\subparagraph*{(d)}
+The completed version of table is shown in Tab. 1\ref{hw5.2}.
+\begin{table}
+	\centering
+	\begin{tabular}{|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
+		\hline
+		\#  & 0 & 1 & 2 & 4 & 8 & 16 & 32 & 64\\
+		\hline 
+		 $\mathcal{L}$& -2.5709 & -0.6938 & -0.5442 & -0.5385 & -0.5372 & -0.5365 & -0.5363 & -0.5365\\
+		\hline
+	\end{tabular}
+	\label{hw5.2}
+	\caption{the log-likelihood}
+\end{table}
+
+\subsection*{5.3 EM algorithm for noisy-OR}
+\subparagraph*{(a)}
+\begin{eqnarray*}
+	\cosh x &=& \frac{e^x + e^{-x}}{2}\\
+	f(x) &=& \log \frac{e^x + e^{-x}}{2}\\
+	f'(x) &=& \frac{2}{e^x + e^{-x}} \frac{e^x - e^{-x}}{2}\\
+	&=& \frac{e^{2x}-1}{e^{2x}+1}\\
+	f''(x) &=& \frac{2e^{2x}(e^{2x}+1) - 2e^{2x}(e^{2x}-1)}{(e^{2x}+1)^2}\\
+	&=& \frac{4e^{2x}}{(e^{2x}+1)^2}
+\end{eqnarray*}
+Let $f'(x)=0$, we get $x=0$. And since $f''(x) \ge 0$, we can tell that minimum occurs at $x=0$.
+
+\subparagraph*{(b)}
+\begin{eqnarray*}
+	f''(x) &=& \frac{4e^{2x}}{(e^{2x}+1)^2}\\
+	&=& \left(\frac{2e^x}{e^{2x}+1}\right)^2\\
+	&=& \left(\frac{1}{coshx}\right)^2\\
+	&\le& 1
+\end{eqnarray*}
+
+\subparagraph*{(c)}
+The plot is shown in Fig. \ref{hw_5_3_c}
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{hw_5_3_c}
+	\label{hw_5_3_c}
+	\caption{5.3 (c)}
+\end{figure}
+
+\subparagraph*{(d)}
+Compute the partial derivative of y:
+\begin{eqnarray*}
+	\frac{\partial Q(x,y)}{\partial y} &=& f'(y) + xf''(y) - f'(y)-yf''(y)-(x-y)\\
+	&=& (f''(y)-1)(x-y)
+\end{eqnarray*}
+Let this partial derivative equal zero, we get $y=x, y=1$. And according to $\frac{\partial^2 Q(x,y)}{\partial^2 y}$,$y=x$ is the minimum point, which means $Q(x,y) \ge Q(x,x) = f(x)$.
+
+\subparagraph*{(e)}
+\begin{eqnarray*}
+	Q(x, x_n) &=& \frac{1}{2}x^2 + [f'(x_n) - x_n]x + f(x_n) + f'(x_n)x_n + x_n^2\\
+\end{eqnarray*}
+It's a quatratic equation. So the minimum is $x_{n+1}=x_n - f'(x_n)$.
+\begin{eqnarray*}
+	x_{n+1}=x_n - \frac{e^{2x_n}-1}{e^{2x_n}+1}\\
+\end{eqnarray*}
+
+\subparagraph*{(f)}
+The convergences are shown in Fig. \ref{hw_5_3_f}.
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{hw_5_3_f}
+	\label{hw_5_3_f}
+	\caption{5.3 (f)}
+\end{figure}
+\subparagraph*{(g)}
+After several iterations, the update results changes to NAN. The reason is that ￥$''(x)$ decrease too
+fast (quadratically). And the upper bound on $|x_0|$ so that Newtons method converges is 1.1.
+
+
+\end{document}
+
+
+
