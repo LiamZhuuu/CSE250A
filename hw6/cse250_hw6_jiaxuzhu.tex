@@ -22,150 +22,139 @@
 
 \begin{document}
 
-\title{CSE 250A: Assignment 5}
+\title{CSE 250A: Assignment 6}
 \author{Jiaxu Zhu~~A53094655}
 \date{\today}
 \maketitle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{5.1 EM algorithm}
-\subparagraph*{(a)~Posterior probability}
-\begin{eqnarray*}
-	P(a,c|b,d) &=& \frac{P(a,c,b,d)}{P(b,d)}\\
-	&=&\frac{P(a,c,b,d)}{\sum_{a',c'}P(a',b,c',d)}\\
-	&=&\frac{P(a)P(b|a)P(c|a,b)P(d|b,c)}{\sum_{a',c'}P(a')P(b|a')P(c'|a',b)P(d|b,c')}
-\end{eqnarray*}
+\subsection*{6.1}
 
-\subparagraph*{(b)~Posterior probability}
-\begin{eqnarray*}
-	P(a|b,d) &=& \sum_{c'}P(a,c'|b,d)\\
-	P(c|b,d) &=& \sum_{a'}P(a',c|b,d)\\ 
-\end{eqnarray*}
 
-\subparagraph*{(c)~Log-likelihood}
-\begin{eqnarray*}
-	\mathcal{L} &=& \sum_{t}\log P(B = b_t, D = d_t)\\
-	&=& \sum_{t}\log \sum_{a', c'}P(A = a', B = b_t, C = c', D = d_t)\\
-	&=& \sum_{t}\log \sum_{a',c'}P(A=a')P(B=b_t|A=a')P(C=c'|A=a',B=b_t)P(D=d_t|B=b_t,C=c')
-\end{eqnarray*}
 
-\subparagraph*{(d)~EM algorithm}
-\subparagraph*{E-step}
-\begin{eqnarray*}
-	P(b,a|b_t, d_t) &=& I(b, b_t)P(a|b_t, d_t)\\
-	P(c, a, b | b_t, d_t) &=& I(b, b_t)P(a, c|b_t, d_t)\\
-	P(d, b, c | b_t, d_t) &=& I(b, b_t)I(d, d_t)P(c|b_t, d_t)\\
-\end{eqnarray*}
-\subparagraph*{M-step}
-\begin{eqnarray*}
-	P(b | a) &=& \frac{\sum_{t}P(b, a|b_t, d_t)}{\sum_{t}P(a|b_t, d_t)}\\
-	&=& \frac{\sum_{t}I(b, b_t)P(a|b_t, d_t)}{\sum_{t}P(a|b_t, d_t)}\\
-	P(c, a, b | b_t, d_t) &=& \frac{\sum_{t}P(c, b, a|b_t, d_t)}{\sum_{t}P(a, b|b_t, d_t)}\\
-	&=& \frac{\sum_{t}I(b, b_t)P(a, c|b_t, d_t)}{\sum_{t}I(b, b_t)P(a|b_t, d_t)}\\
-	P(d, b, c | b_t, d_t) &=& \frac{\sum_{t}P(d, c, b|b_t, d_t)}{\sum_{t}P(b, c|b_t, d_t)}\\
-	&=& \frac{\sum_{t}I(b, b_t)I(d, d_t)P(c|b_t, d_t)}{\sum_{t}I(b, b_t)P(c|b_t, d_t)}\\
-\end{eqnarray*}
-
-\subsection*{5.2 EM algorithm for noisy-OR}
+\subsection*{6.2 Inference in HMMs}
 \subparagraph*{(a)}
 \begin{eqnarray*}
-	P(Y = 1| X) &=& \sum_{Z \in \{0,1\}^n}P(Y =1 ,Z | X)\\	
-	&=& \sum_{Z \in \{0,1\}^n}P(Y =1 |Z , X) P(Z|X)\\
-	&=& \sum_{Z \in \{0,1\}^n}P(Y=1|Z)P(Z|X)~~(d-separation~~\RNum{1})\\
-	&=& \sum_{Z \in \{0,1\}^n}P(Y=1|Z)\prod_{i=1}^{n}P(Z_i|X_i)~~(d-separation~~\RNum{3})\\
-	&=& 1- \sum_{Z \in \{0,1\}^n}P(Y=0|Z)\prod_{i=1}^{n}P(Z_i|X_i)~~(d-separation~~\RNum{3})\\
-	&=& 1- P(Y=0|Z=\vec{0})\prod_{i=1}^{n}P(Z_i=0|X_i)\\
-	&=& 1 - \prod_{i=1}^{n}(1-p_i)^{X_i}
+	P(S_t=i | S_{t+1}=j, o_1, o_2, ..., o_T ) &=& P(S_t=i | S_{t+1}=j, o_1, o_2, ..., o_{t} )~~(d-separation~\RNum{1})\\
+	&=& \frac{P(S_{t+1}=j | S_{t}=i, o_1, o_2, ..., o_{t} )P(S_t=i |o_1, o_2, ..., o_{t} )}{P(S_{t+1}=j| o_1, o_2, ..., o_{t} )}\\
+	&=& \frac{P(S_{t+1}=j | S_{t}=i )P(S_t=i , o_1, o_2, ..., o_{t} )}{P(S_{t+1}=j, o_1, o_2, ..., o_{t} )}~~(d-separation~\RNum{2})\\
+	&=& \frac{P(S_{t+1}=j | S_{t}=i )P(S_t=i , o_1, o_2, ..., o_{t} )}{\sum_k P(S_{t+1}=j, S_t=k, o_1, o_2, ..., o_{t} )}\\
+	&=& \frac{P(S_{t+1}=j | S_{t}=i )P(S_t=i , o_1, o_2, ..., o_{t} )}{\sum_k P(S_{t+1}=j | S_t=k)P(S_t=k, o_1, o_2, ..., o_{t} )}\\
+	&=& \frac{a_{ij}\alpha_{it}}{\sum_{k} a_{kj}\alpha_{kt}}
 \end{eqnarray*}
 
 \subparagraph*{(b)}
 \begin{eqnarray*}
-	P(Z_i = 1, X_i = 1| X=x, Y=y) &=& P(x_i = 1)P(Z_i = 1|X=x, Y=y)\\
-	&=& x_i \frac{P(Y=y|X=x, Z_i = 1)P(Z_i = 1|X=x)}{P(Y=y|X=x)}\\
-	&=& \frac{y x_i p_i}{1 - \prod_{i=1}^{n}(1-p_i)^{X_i}}
+	P(S_{t+1}=j, |S_t=i , o_1, o_2, ..., o_T ) &=& P(S_{t+1}=j, |S_t=i , o_{t+1}, o_{t+2}, ..., o_T )~~(d-separation~\RNum{1}\&\RNum{2})\\
+	&=& \frac{P(o_{t+1}, o_{t+2}, ..., o_T | S_{t+1}=j, S_t=i)P(S_{t+1}=j, |S_t=i )}{P(o_{t+1}, o_{t+2}, ..., o_T, |S_t=i)}\\
+	&=& \frac{P(o_{t+1}|S_{t+1}=j)P(o_{t+2}, ..., o_T | S_{t+1}=j)P(S_{t+1}=j, |S_t=i )}{P(o_{t+1}, o_{t+2}, ..., o_T, |S_t=i)}~~(d-separation~\RNum{1}\&\RNum{2})\\
+	&=& \frac{\beta_{j(t+1)}a_{ij}b_j(o_{t+1})}{\beta_{it}}
 \end{eqnarray*}
 
 \subparagraph*{(c)}
 \begin{eqnarray*}
-	p_i &=& \frac{\sum_{t}P(Z_i=1, X_i=1| X=x^{(t)}, Y=y^{(t)})}{\sum_{t}P(X_i=1| X=x^{(t)}, Y=y^{(t)})}\\
-	&=& \frac{\sum_{t}P(Z_i=1, X_i=1| X=x^{(t)}, Y=y^{(t)})}{\sum_{t}P(X_i=1)}\\
-	&=& \frac{1}{T_i}\sum_{t}P(Z_i=1, X_i=1| X=x^{(t)}, Y=y^{(t)})
+	P(S_{t+1}=k, |S_{t-1}=i, S_t=j , o_1, o_2, ..., o_T ) &=& P(S_{t+1}=k, | S_t=j , o_{t+1}, o_{t+2}, ..., o_T )~~(d-separation~\RNum{1}\&\RNum{2})\\
+	&=& \frac{\beta_{k(t+1)}a_{jk}b_k(o_{t+1})}{\beta_{jt}}
 \end{eqnarray*}
-where $T_i$ is the number of examples in which $X_i=1$.
 
 \subparagraph*{(d)}
-The completed version of table is shown in Tab. 1\ref{hw5.2}.
-\begin{table}
-	\centering
-	\begin{tabular}{|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
-		\hline
-		\#  & 0 & 1 & 2 & 4 & 8 & 16 & 32 & 64\\
-		\hline 
-		 $\mathcal{L}$& -2.5709 & -0.6938 & -0.5442 & -0.5385 & -0.5372 & -0.5365 & -0.5363 & -0.5365\\
-		\hline
-	\end{tabular}
-	\label{hw5.2}
-	\caption{the log-likelihood}
-\end{table}
+\begin{eqnarray*}
+	P(S_{t+1}=k, |S_{t-1}=i , o_1, o_2, ..., o_T ) 
+	&=& \sum_j P(S_{t+1}=k, S_t=j|S_{t-1}=i , o_1, o_2, ..., o_T )\\
+	&=& \sum_j P(S_{t+1}=k | S_t=j, S_{t-1}=i , o_1, o_2, ..., o_T )P(S_t=j| S_{t-1}=i , o_1, o_2, ..., o_T )\\
+	&=& \sum_j \frac{\beta_{k(t+1)}a_{jk}b_k (o_{t+1})}{\beta_{jt}} \frac{\beta_{jt}a_{ij}b_j( o_{t})}{\beta_{i(t-1)}}\\
+\end{eqnarray*}
 
-\subsection*{5.3 EM algorithm for noisy-OR}
+\subsection*{6.3 Belief updating}
 \subparagraph*{(a)}
 \begin{eqnarray*}
-	\cosh x &=& \frac{e^x + e^{-x}}{2}\\
-	f(x) &=& \log \frac{e^x + e^{-x}}{2}\\
-	f'(x) &=& \frac{2}{e^x + e^{-x}} \frac{e^x - e^{-x}}{2}\\
-	&=& \frac{e^{2x}-1}{e^{2x}+1}\\
-	f''(x) &=& \frac{2e^{2x}(e^{2x}+1) - 2e^{2x}(e^{2x}-1)}{(e^{2x}+1)^2}\\
-	&=& \frac{4e^{2x}}{(e^{2x}+1)^2}
+q_{jt} &=& P(S_t = j | o_1, o_2, ..., o_t)\\
+&=& \frac{P(S_t = j , o_1, o_2, ..., o_t)}{P(o_1, o_2, ..., o_t)}~~(product~rule)\\
+&=&  \frac{\sum_i P(S_t = j , S_{t-1}=i, o_1, o_2, ..., o_t)}{\sum_{ik} P(S_t=k, S_{t-1}=i, o_1, o_2, ..., o_t)}~~(marginalization)\\
+&=&  \frac{\sum_i P(o_t | S_t = j)P(S_t = j | S_{t-1}=i)P(S_{t-1}=i | o_1, o_2, ..., o_{t-1})P(o_1, o_2, ..., o_{t-1})}{\sum_{ik} P(o_t | S_t = k)P(S_t = k | S_{t-1}=i)P(S_{t-1}=i | o_1, o_2, ..., o_{t-1})P(o_1, o_2, ..., o_{t-1})}~~(product + d-separation~\RNum{1})\\
+&=&\frac{b_j(o_t) \sum_i a_{ij}q_{it-1}}{\sum_{ik} b_j(o_t)a_{ik}q_{it-1}}
 \end{eqnarray*}
-Let $f'(x)=0$, we get $x=0$. And since $f''(x) \ge 0$, we can tell that minimum occurs at $x=0$.
 
 \subparagraph*{(b)}
 \begin{eqnarray*}
-	f''(x) &=& \frac{4e^{2x}}{(e^{2x}+1)^2}\\
-	&=& \left(\frac{2e^x}{e^{2x}+1}\right)^2\\
-	&=& \left(\frac{1}{coshx}\right)^2\\
-	&\le& 1
+	P(x_t | y_1, y_2, ..., y_t) 
+	&=& \frac{P(x_t , y_1, y_2, ..., y_t)}{P(y_1, y_2, ..., y_t)}~~(product~rule)\\
+	&=&  \frac{\int dx_{t-1}P(x_t , x_{t-1}, y_1, y_2, ..., y_t)}{\int dx_{t}\int dx_{t-1}P(x_t , x_{t-1}, y_1, y_2, ..., y_t)}~~(marginalization)\\
+	&=&  \frac{\int dx_{t-1} P(y_t | x_t)P(x_t = j | x_{t-1})P(x_{t-1} | y_1, y_2, ..., y_{t-1})P(y_1, y_2, ..., y_{t-1})}{\int dx_{t} \int dx_{t-1} P(y_t | x_t)P(x_t = j | x_{t-1})P(x_{t-1} | y_1, y_2, ..., y_{t-1})P(y_1, y_2, ..., y_{t-1})}~~(product + d-separation~\RNum{1})\\
+	&=&\frac{P(y_t | x_t) \int dx_{t-1} P(x_t | x_{t-1})P(x_{t-1} | y_1, y_2, ..., y_{t-1})}{\int dx_{t}P(y_t | x_t) \int dx_{t-1} P(x_t | x_{t-1})P(x_{t-1} | y_1, y_2, ..., y_{t-1})}
+\end{eqnarray*}
+
+The reason why this real-time updating difficult for all but Gaussian random variables is that 
+\subsection*{6.4 Continuous density HMM}
+\subparagraph*{(a)}
+The distribution $P(X_t | S_{t-1})$ is a mixture of univariate Gaussians.
+It contains n mixture components because it can be written as
+\begin{eqnarray*}
+	P(X_t | S_{t-1}) &=& \sum_{i=1}^{n} P(X_t, S_t = i| S_{t-1})\\
+	&=& \sum_{i=1}^{n} P(X_t |S_t = i)P(S_t = i | S_{t-1})\\
+\end{eqnarray*}
+
+\subparagraph*{(b)}
+The distribution $P(X_t , X_{t'}| S_t , S_{t'})$ is not a mixture of univariate Gaussians.
+It is a product of Gaussians because it can be written as
+\begin{eqnarray*}
+	P(X_t , X_{t'}| S_t , S_{t'}) &=& P(X_t| S_t , S_{t'})P( X_{t'}| S_t , S_{t'})\\ 
+	&=& P(X_t| S_t)P( X_{t'}| S_{t'})\\
 \end{eqnarray*}
 
 \subparagraph*{(c)}
-The plot is shown in Fig. \ref{hw_5_3_c}
-\begin{figure}
-	\centering
-	\includegraphics[width=8cm]{hw_5_3_c}
-	\label{hw_5_3_c}
-	\caption{5.3 (c)}
-\end{figure}
+The distribution $P(X_1, X_2, ..., X_T)$ is not a mixture of univariate Gaussians.
+It is a product of Gaussians because it can be written as
+\begin{eqnarray*}
+	P(X_1, X_2, ..., X_T) &=& \sum_{S'} P(S', X_1, X_2, ..., X_T)\\
+	&=& \sum_{i_1=1}^{n}\sum_{i_2=1}^{n}\cdots\sum_{i_T=1}^{n}P(S_1 = i_1)\prod_{t=2}^{T}P(S_t = i_t | S_{t-1} = i_{t-1})\prod_{t=1}^{T}P(S_t = i_t | X_t)
+\end{eqnarray*}
 
 \subparagraph*{(d)}
-Compute the partial derivative of y:
+The distribution $P(X_t | X_1, X_2, ..., X_{t-1})$ is a mixture of univariate Gaussians.
+It contains $n^2$ mixture components because it can be written as
 \begin{eqnarray*}
-	\frac{\partial Q(x,y)}{\partial y} &=& f'(y) + xf''(y) - f'(y)-yf''(y)-(x-y)\\
-	&=& (f''(y)-1)(x-y)
+	P(X_t | X_1, X_2, ..., X_{t-1}) &=& \sum_{i=1}^n \sum_{j=1}^n P(X_t , S_t = i, S_{t-1} = j| X_1, X_2, ..., X_{t-1})\\
+	&=& \sum_{i=1}^n \sum_{j=1}^n P(X_t | S_t = i, S_{t-1} = j)P(S_t = i, S_{t-1} = j| X_1, X_2, ..., X_{t-1})\\
+	&=& \sum_{i=1}^n \sum_{j=1}^n P(X_t | S_t = i)P(S_t = i | S_{t-1} = j)P(S_{t-1} = j |  X_1, X_2, ..., X_{t-1})\\
+	&=& \sum_{i=1}^n \sum_{j=1}^n P(X_t | S_t = i)P(S_t = i | S_{t-1} = j)\frac{P(X_{t-1}| S_{t-1} = j,  X_1, X_2, ..., )}{den}P(S_{t-1} = j |  X_1, X_2, ..., X_{t-1})\\
 \end{eqnarray*}
-Let this partial derivative equal zero, we get $y=x, y=1$. And according to $\frac{\partial^2 Q(x,y)}{\partial^2 y}$,$y=x$ is the minimum point, which means $Q(x,y) \ge Q(x,x) = f(x)$.
 
 \subparagraph*{(e)}
+The distribution $P(X_t | X_1, X_2, ..., X_{t-1})$ is a mixture of univariate Gaussians.
+It contains $n^T$ mixture components because it can be written as
 \begin{eqnarray*}
-	Q(x, x_n) &=& \frac{1}{2}x^2 + [f'(x_n) - x_n]x + f(x_n) + f'(x_n)x_n + x_n^2\\
-\end{eqnarray*}
-It's a quatratic equation. So the minimum is $x_{n+1}=x_n - f'(x_n)$.
-\begin{eqnarray*}
-	x_{n+1}=x_n - \frac{e^{2x_n}-1}{e^{2x_n}+1}\\
+	P(X_T) &=& \sum_{i_1=1}^{n}\sum_{i_2=1}^{n}\cdots\sum_{i_T=1}^{n} P(X_T, S_1, S_2, ..., S_T)\\
+	&=& \sum_{i_1=1}^{n}\sum_{i_2=1}^{n}\cdots\sum_{i_T=1}^{n}P(X_T|S_T=i_T)P(S_T=i_T|S_{T-1}=i_{t-1})\cdots  P(S_2=i_2|S_1=i_1)P(S_1 = i_1)\\
 \end{eqnarray*}
 
 \subparagraph*{(f)}
-The convergences are shown in Fig. \ref{hw_5_3_f}.
-\begin{figure}
-	\centering
-	\includegraphics[width=8cm]{hw_5_3_f}
-	\label{hw_5_3_f}
-	\caption{5.3 (f)}
-\end{figure}
-\subparagraph*{(g)}
-After several iterations, the update results changes to NAN. The reason is that ￥$''(x)$ decrease too
-fast (quadratically). And the upper bound on $|x_0|$ so that Newtons method converges is 1.1.
+The distribution $P(X_1, X_2, ..., X_t | S_1, S_2, ..., S_t)$ is not a mixture of univariate Gaussians.
+It is a product of Gaussians because it can be written as
+\begin{eqnarray*}
+	P(X_1, X_2, ..., X_t | S_1, S_2, ..., S_t) &=& \frac{P(X_1, X_2, ..., X_t , S_1, S_2, ..., S_t)}{P( S_1, S_2, ..., S_t)}\\
+	&=& \frac{P(S_1)\prod_{t=2}^{T}P(S_t | S_{t-1})\prod_{t=1}^{T}P(S_t | X_t)}{P(S_1)\prod_{t=2}^{T}P(S_t | S_{t-1})}\\
+	&=&  \prod_{t=1}^{T}P(S_t | X_t)
+\end{eqnarray*}
 
+\subsection*{6.5 Mixture model decision boundary}
+\subparagraph*{(a)}
+\begin{eqnarray*}
+	P(y=1 | \vec{x}) &=& \frac{P (\vec{x} | y=1)P(y=1)}{P(\vec{x})}\\
+	&=& \frac{P (\vec{x} | y=1)P(y=1)}{\sum_{i=0}^1 P(\vec{x}|y=i)P(y=i)}\\
+	&=& \frac{\pi_1 (2\pi)^{-\frac{d}{2}}|\sum_1|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_1)^T\sum_{1}^{-1}(\vec{x}-\vec{\mu}_1)}}{\sum_{i=0}^1 \pi_i (2\pi)^{-\frac{d}{2}}|\sum_i|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_i)^T\sum_{i}^{-1}(\vec{x}-\vec{\mu}_i)}}\\
+	&=& \frac{\pi_1 |\sum_1|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_1)^T\sum_{1}^{-1}(\vec{x}-\vec{\mu}_1)}}{\sum_{i=0}^1 \pi_i |\sum_i|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_i)^T\sum_{i}^{-1}(\vec{x}-\vec{\mu}_i)}}\\
+\end{eqnarray*}
 
+\subparagraph*{(b)}
+\begin{eqnarray*}
+	P(y=1 | \vec{x}) &=& \frac{\pi_1 |\sum|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_1)^T\sum^{-1}(\vec{x}-\vec{\mu}_1)}}{\sum_{i=0}^1 \pi_i |\sum|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_i)^T\sum^{-1}(\vec{x}-\vec{\mu}_i)}}\\
+	&=& \frac{1}{1 +  \frac{\pi_0}{\pi_1} e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_0)^T\sum^{-1}(\vec{x}-\vec{\mu}_0)+\frac{1}{2}(\vec{x}-\vec{\mu}_1)^T\sum^{-1}(\vec{x}-\vec{\mu}_1)}}\\
+\end{eqnarray*}
+Since $(\vec{x}-\vec{\mu}_0)^T\sum^{-1}(\vec{x}-\vec{\mu}_0) = \sum_{i=1}^{d}\sum_{j=1}^{d}(x_i - \mu_{0i})(x_j - \mu_{0j})\sum_{ij}$
+
+\begin{eqnarray*}
+	P(y=1 | \vec{x}) &=& \frac{1}{1 +  \frac{\pi_0}{\pi_1} e^{-\frac{1}{2}()}}\\
+\end{eqnarray*}
 \end{document}
 
 
