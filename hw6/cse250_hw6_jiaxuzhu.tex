@@ -27,9 +27,16 @@
 \date{\today}
 \maketitle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{6.1}
+\subsection*{6.1 Viterbi algorithm}
+\subparagraph*{(b)}
+a plot of the most likely sequence of hidden states versus time is displayed in Fig. \ref{state}.
 
-
+\begin{figure}
+	\centering
+	\includegraphics[width = 8cm]{state}
+	\caption{most likely sequence of hidden states}
+	\label{state}
+\end{figure}
 
 \subsection*{6.2 Inference in HMMs}
 \subparagraph*{(a)}
@@ -94,16 +101,16 @@ It contains n mixture components because it can be written as
 \end{eqnarray*}
 
 \subparagraph*{(b)}
-The distribution $P(X_t , X_{t'}| S_t , S_{t'})$ is not a mixture of univariate Gaussians.
-It is a product of Gaussians because it can be written as
+The distribution $P(X_t , X_{t'}| S_t , S_{t'})$ is a multivariate Gaussian.
+It is a product of two independent Gaussians because it can be written a
 \begin{eqnarray*}
 	P(X_t , X_{t'}| S_t , S_{t'}) &=& P(X_t| S_t , S_{t'})P( X_{t'}| S_t , S_{t'})\\ 
 	&=& P(X_t| S_t)P( X_{t'}| S_{t'})\\
 \end{eqnarray*}
 
 \subparagraph*{(c)}
-The distribution $P(X_1, X_2, ..., X_T)$ is not a mixture of univariate Gaussians.
-It is a product of Gaussians because it can be written as
+The distribution $P(X_1, X_2, ..., X_T)$ is a multivariate Gaussian.
+It is a product of two independent Gaussians because it can be written as
 \begin{eqnarray*}
 	P(X_1, X_2, ..., X_T) &=& \sum_{S'} P(S', X_1, X_2, ..., X_T)\\
 	&=& \sum_{i_1=1}^{n}\sum_{i_2=1}^{n}\cdots\sum_{i_T=1}^{n}P(S_1 = i_1)\prod_{t=2}^{T}P(S_t = i_t | S_{t-1} = i_{t-1})\prod_{t=1}^{T}P(S_t = i_t | X_t)
@@ -111,12 +118,10 @@ It is a product of Gaussians because it can be written as
 
 \subparagraph*{(d)}
 The distribution $P(X_t | X_1, X_2, ..., X_{t-1})$ is a mixture of univariate Gaussians.
-It contains $n^2$ mixture components because it can be written as
+It contains $n$ mixture components because it can be written as
 \begin{eqnarray*}
-	P(X_t | X_1, X_2, ..., X_{t-1}) &=& \sum_{i=1}^n \sum_{j=1}^n P(X_t , S_t = i, S_{t-1} = j| X_1, X_2, ..., X_{t-1})\\
-	&=& \sum_{i=1}^n \sum_{j=1}^n P(X_t | S_t = i, S_{t-1} = j)P(S_t = i, S_{t-1} = j| X_1, X_2, ..., X_{t-1})\\
-	&=& \sum_{i=1}^n \sum_{j=1}^n P(X_t | S_t = i)P(S_t = i | S_{t-1} = j)P(S_{t-1} = j |  X_1, X_2, ..., X_{t-1})\\
-	&=& \sum_{i=1}^n \sum_{j=1}^n P(X_t | S_t = i)P(S_t = i | S_{t-1} = j)\frac{P(X_{t-1}| S_{t-1} = j,  X_1, X_2, ..., )}{den}P(S_{t-1} = j |  X_1, X_2, ..., X_{t-1})\\
+	P(X_t | X_1, X_2, ..., X_{t-1}) &=& \sum_{i=1}^n  P(X_t , S_t = i| X_1, X_2, ..., X_{t-1})\\
+	&=& \sum_{i=1}^n  P(X_t | S_t = i)P(S_t = i| X_1, X_2, ..., X_{t-1})\\
 \end{eqnarray*}
 
 \subparagraph*{(e)}
@@ -128,12 +133,12 @@ It contains $n^T$ mixture components because it can be written as
 \end{eqnarray*}
 
 \subparagraph*{(f)}
-The distribution $P(X_1, X_2, ..., X_t | S_1, S_2, ..., S_t)$ is not a mixture of univariate Gaussians.
-It is a product of Gaussians because it can be written as
+The distribution $P(X_1, X_2, ..., X_t | S_1, S_2, ..., S_t)$ is a multivariate Gaussian.
+It is a product of two independent Gaussians because it can be written a
 \begin{eqnarray*}
 	P(X_1, X_2, ..., X_t | S_1, S_2, ..., S_t) &=& \frac{P(X_1, X_2, ..., X_t , S_1, S_2, ..., S_t)}{P( S_1, S_2, ..., S_t)}\\
-	&=& \frac{P(S_1)\prod_{t=2}^{T}P(S_t | S_{t-1})\prod_{t=1}^{T}P(S_t | X_t)}{P(S_1)\prod_{t=2}^{T}P(S_t | S_{t-1})}\\
-	&=&  \prod_{t=1}^{T}P(S_t | X_t)
+	&=& \frac{P(S_1)\prod_{t=2}^{T}P(S_t | S_{t-1})\prod_{t=1}^{T}P(X_t | S_t)}{P(S_1)\prod_{t=2}^{T}P(S_t | S_{t-1})}\\
+	&=&  \prod_{t=1}^{T}P(X_t | S_t)
 \end{eqnarray*}
 
 \subsection*{6.5 Mixture model decision boundary}
@@ -149,12 +154,21 @@ It is a product of Gaussians because it can be written as
 \begin{eqnarray*}
 	P(y=1 | \vec{x}) &=& \frac{\pi_1 |\sum|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_1)^T\sum^{-1}(\vec{x}-\vec{\mu}_1)}}{\sum_{i=0}^1 \pi_i |\sum|^{-\frac{1}{2}}e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_i)^T\sum^{-1}(\vec{x}-\vec{\mu}_i)}}\\
 	&=& \frac{1}{1 +  \frac{\pi_0}{\pi_1} e^{-\frac{1}{2}(\vec{x}-\vec{\mu}_0)^T\sum^{-1}(\vec{x}-\vec{\mu}_0)+\frac{1}{2}(\vec{x}-\vec{\mu}_1)^T\sum^{-1}(\vec{x}-\vec{\mu}_1)}}\\
+	(\vec{x}-\vec{\mu}_0)^T\sum(\vec{x}-\vec{\mu}_0) - (\vec{x}-\vec{\mu}_1)^T\sum(\vec{x}-\vec{\mu}_1) &=& \sum_{i=1}^{d}\sum_{j=1}^{d}[(x_i - \mu_{0i})(x_j - \mu_{0j}) - (x_i - \mu_{1i})(x_j - \mu_{1j})]\sum_{ij}\\
+	&=& \sum_{i=1}^{d}\sum_{j=1}^{d}[(\mu_{1j} - \mu_{0j})x_i + (\mu_{1i} - \mu_{0i})x_j + \mu_{0i}\mu_{0j}- \mu_{1i}\mu_{1j}]\sum_{ij}\\
+	&=& \sum_{i=1}^{d}[\sum_{j=1}^{d}(\sum_{ij} + \sum_{ji})(\mu_{1j} - \mu_{0j})x_i] + \sum_{i=1}^{d}\sum_{j=1}^{d}（(\mu_{0i}\mu_{0j}- \mu_{1i}\mu_{1j})\sum_{ij}\\
+	w_i &=& \frac{1}{2}\sum_{j=1}^{d}(\sum_{ij} + \sum_{ji})(\mu_{1j} - \mu_{0j})\\
+	b &=& \frac{1}{2}\sum_{i=1}^{d}\sum_{j=1}^{d}（(\mu_{0i}\mu_{0j}- \mu_{1i}\mu_{1j})\sum_{ij} + \log(\frac{\pi_0}{\pi_1})
 \end{eqnarray*}
-Since $(\vec{x}-\vec{\mu}_0)^T\sum^{-1}(\vec{x}-\vec{\mu}_0) = \sum_{i=1}^{d}\sum_{j=1}^{d}(x_i - \mu_{0i})(x_j - \mu_{0j})\sum_{ij}$
 
+\subparagraph*{(c)}
 \begin{eqnarray*}
-	P(y=1 | \vec{x}) &=& \frac{1}{1 +  \frac{\pi_0}{\pi_1} e^{-\frac{1}{2}()}}\\
+	\frac{P(y=1|\vec{x})}{P(y=0|\vec{x})} &=& k\\
+	P(y=1|\vec{x}) &=& \frac{k}{k+1}\\
+	e^{-(\vec{w} \cdot \vec{x}+b)} &=& \frac{1}{k}\\
+	\vec{w} \cdot \vec{x} &=& \log(k) - b
 \end{eqnarray*}
+That's the hyperplane.
 \end{document}
 
 
