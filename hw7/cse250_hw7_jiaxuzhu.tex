@@ -1,0 +1,275 @@
+\documentclass{article}
+\usepackage[left=3cm,right=3cm,top=2cm,bottom=2cm]{geometry} % page settings
+\usepackage{amsmath} % provides many mathematical environments & tools
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{mathtools}
+\usepackage{textcomp}
+
+\setlength{\parindent}{0mm}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+\def\BState{\State\hskip-\ALG@thistlm}
+
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\begin{document}
+
+\title{CSE 250A: Assignment 7}
+\author{Jiaxu Zhu~~A53094655}
+\date{\today}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{7.1 Policy improvement}
+\subparagraph*{(a)}
+The state-value function is shown in Table \ref{7.1a}.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|}
+		\hline
+		$s$ & $\pi(s)$ & $V^\pi(s)$\\
+		\hline
+		0 & 0 & $-1.5$ \\
+		\hline
+		1 & 0 & $7.5$ \\
+		\hline
+	\end{tabular}
+	\caption{The state-value function}
+	\label{7.1a}
+\end{table}
+
+\subparagraph*{(b)}
+The greedy policy $\pi'(s)$ with respect to the state-value function $V^\pi(s)$ is shown in Table \ref{7.1b}.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|p{2cm}|p{2cm}|p{2cm}|}
+		\hline
+		$s$ & $\pi(s)$ & $\pi'(s)$\\
+		\hline
+		0 & 0 & 1 \\
+		\hline
+		1 & 0 & 0 \\
+		\hline
+	\end{tabular}
+	\caption{The greedy policy}
+	\label{7.1b}
+\end{table}
+
+\subsection*{7.2 Value and policy iteration}
+\subparagraph*{(a)}
+The optimal state values are shown in Table. \ref{statevalue}, according to the map.
+\begin{table}
+	\centering
+	\begin{tabular}{|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+		\hline
+		0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 \\ 
+		\hline
+		0.00 &  72.98 &  73.80 &  74.63 &  0.00 &  -100.00 &  59.67 &  -100.00 &  0.00 \\ 
+		\hline
+		71.39 &  72.17 &  0.00 &  75.47 &  74.40 &  64.89 &  68.95 &  59.67 &  0.00 \\ 
+		\hline
+		0.00 &  0.00 &  77.20 &  76.34 &  0.00 &  -100.00 &  70.31 &  -100.00 &  0.00 \\ 
+		\hline
+		0.00 &  0.00 &  78.07 &  0.00 &  0.00 &  0.00 &  80.33 &  0.00 &  0.00 \\ 
+		\hline
+		0.00 &  79.83 &  78.94 &  0.00 &  0.00 &  -100.00 &  81.47 &  -100.00 &  0.00 \\ 
+		\hline
+		0.00 &  80.72 &  0.00 &  84.41 &  85.36 &  86.31 &  92.20 &  93.67 &  100.00 \\ 
+		\hline
+		0.00 &  81.63 &  82.55 &  83.47 &  0.00 &  90.52 &  91.62 &  92.64 &  0.00 \\ 
+		\hline
+		0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 &  0.00 \\ 
+		\hline
+	\end{tabular}
+	\caption{Optimal State Value}
+	\label{statevalue}
+\end{table}
+
+
+\subparagraph*{(b)}
+The optimal policies are shown in Table. \ref{policy}, according to the map.
+\begin{table}
+	\centering
+	\begin{tabular}{|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+		\hline
+		*  & *  & *  & *  & *  & *  & *  & *  & * \\
+		\hline
+		*  & EAST  & EAST  & SOUTH  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		EAST  & NORTH  & *  & SOUTH  & WEST  & WEST  & SOUTH  & WEST  & * \\
+		\hline
+		*  & *  & SOUTH  & WEST  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		*  & *  & SOUTH  & *  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		*  & SOUTH  & WEST  & *  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		*  & SOUTH  & *  & EAST  & EAST  & EAST  & EAST  & EAST  & WEST \\
+		\hline
+		*  & EAST  & EAST  & NORTH  & *  & EAST  & EAST  & NORTH  & * \\
+		\hline
+		*  & *  & *  & *  & *  & *  & *  & *  & * \\
+		\hline
+	\end{tabular}
+	\caption{Optimal State Value}
+	\label{policy}
+\end{table}
+
+\subparagraph*{(c)}
+The optimal policies are shown in Table. \ref{policyiter}, according to the map, which agree with the results from part (b).
+\begin{table}
+	\centering
+	\begin{tabular}{|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+		\hline
+		*  & *  & *  & *  & *  & *  & *  & *  & * \\
+		\hline
+		*  & EAST  & EAST  & SOUTH  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		EAST  & NORTH  & *  & SOUTH  & WEST  & WEST  & SOUTH  & WEST  & * \\
+		\hline
+		*  & *  & SOUTH  & WEST  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		*  & *  & SOUTH  & *  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		*  & SOUTH  & WEST  & *  & *  & *  & SOUTH  & *  & * \\
+		\hline
+		*  & SOUTH  & *  & EAST  & EAST  & EAST  & EAST  & EAST  & WEST \\
+		\hline
+		*  & EAST  & EAST  & NORTH  & *  & EAST  & EAST  & NORTH  & * \\
+		\hline
+		*  & *  & *  & *  & *  & *  & *  & *  & * \\
+		\hline
+	\end{tabular}
+	\caption{Optimal State Value Using Policy Iteration}
+	\label{policyiter}
+\end{table}
+
+\subsection*{7.3 Effective horizon time}
+\begin{eqnarray*}
+	\sum_{n \ge t}\gamma^{n}r_n &\le& \sum_{n \ge t}\gamma^{n}\\
+	&=& \frac{\gamma^n(1-\gamma^{\infty})}{1-\gamma}\\
+	&\le& \frac{\gamma^n}{1-\gamma}\\
+	&\le& \frac{e^{n(\gamma-1)}}{1-\gamma}\\
+	&=& he^{-t/h}
+\end{eqnarray*}
+
+\subsection*{7.4 Convergence of iterative policy evaluation}
+\begin{eqnarray*}
+	\Delta_{k+1} &=& \max_s|V_{k+1}(s) - V^\pi(s)|\\
+	&=& \max_s|R(s)+\gamma\sum_{s'}P(s'|s,\pi(s))V_k(s') - R(s) - \gamma\sum_{s'}P(s'|s,\pi(s))V^\pi(s')|\\
+	&=& \max_s|\gamma\sum_{s'}P(s'|s,\pi(s))(V_k(s')-V^\pi(s'))|\\
+	&=& \max_s \gamma\sum_{s'}P(s'|s,\pi(s))|(V_k(s')-V^\pi(s'))|\\
+	&<& \max_s \gamma\sum_{s'}P(s'|s,\pi(s))\Delta_k\\
+	&=& \gamma \Delta_k \\
+	&<& \gamma^k \Delta_1
+\end{eqnarray*}
+
+It means that the error $\Delta_k$ decays exponentially fast in the number of iterations.
+
+\subsection*{7.5  Value function for a random walk}
+\subparagraph*{(a)}
+\begin{eqnarray*}
+	V^\pi(s) &=& R(s) + \gamma \sum_{s'=0}^{\infty}P(s'|s, \pi(s))V^\pi(s')\\
+	&=& R(s) + \gamma \sum_{s'=s}^{s+1}P(s'|s, \pi(s))V^\pi(s')\\
+\end{eqnarray*}
+
+\subparagraph*{(b)}
+\begin{eqnarray*}
+	V^\pi(s) &=& R(s) + \gamma \sum_{s'=s}^{s+1}P(s'|s, \pi(s))V^\pi(s')\\
+	as+b &=& s + \gamma [\frac{3}{4}(as+b) + \frac{1}{4}(as+a+b)]\\
+	((1-\gamma)a-1) s &=& \frac{1}{4} \gamma a - (1-\gamma)b\\
+\end{eqnarray*}
+
+To make this equation satisfy for $s\in{0,1,2,...,\infty}$
+\begin{eqnarray*}
+	a &=& \frac{1}{1-\gamma}\\
+	b &=& \frac{\gamma}{4(1-\gamma)^2}
+\end{eqnarray*}
+
+\subsection*{7.6  Value function for a random walk}
+\subparagraph*{(a)}
+\begin{eqnarray*}
+	V^\pi(s) &=& R(s) + \gamma \sum_{s'=1}^{n}P(s'|s, \pi(s))V^\pi(s')\\
+	&=& R(s) + \gamma \sum_{s'=1}^{n}P(s'|s, 1)V^\pi(s')\\
+	&=& R(s) + \gamma V^\pi(s)\\
+	V^\pi(s) &=& \frac{R(s)}{1 - \gamma}
+\end{eqnarray*}
+
+\subparagraph*{(b)}
+\begin{eqnarray*}
+	V^\pi(s) &=& R(s) + \gamma \sum_{s'=1}^{n}P(s'|s, \pi(s))V^\pi(s')\\
+	&=& R(s) + \frac{\gamma}{n} \sum_{s'=1}^{n}V^\pi(s')\\
+\end{eqnarray*}
+
+\subparagraph*{(c)}
+\begin{eqnarray*}
+	v &=& \frac{1}{n}\sum_s V^\pi(s)\\
+	&=& \frac{1}{n}[\sum_{s \in S_0} V^\pi(s) + \sum_{s \in S_1} V^\pi(s)]\\
+	&=& \frac{1}{n}\sum_{s \in S_0} R(s) + \frac{1}{n}\sum_{s \in S_0}\frac{\gamma}{n} \sum_{s'=1}^{n}V^\pi(s') + \frac{1}{n}\sum_{s \in S_1} \frac{R(s)}{1 - \gamma}\}\\
+	&=& -r + v \mu \gamma + \frac{r}{1-\gamma}\\
+	v &=& \frac{\gamma r}{(1-\gamma)(1-\gamma\mu)}
+\end{eqnarray*}
+
+\subparagraph*{(d)}
+\begin{eqnarray*}
+	V^\pi(s) &=&  R(s) + \frac{\gamma}{n} \sum_{s'=1}^{n}V^\pi(s')\\
+	&=&  R(s) + \gamma v\\
+	&=& R(s) + \frac{\gamma r}{(1-\gamma)(1-\gamma\mu)}
+\end{eqnarray*}
+
+\subparagraph*{(e)}
+\begin{eqnarray*}
+	\pi^{\star}(s) &=& \arg \max_a Q^{\star}(s,a)\\
+	&=& \arg \max_a [\sum_{s'=1}^nP(s'|s,a)V^{\star}(s')]\\
+\end{eqnarray*}
+For $\pi^{\star}(s) = 1$
+\begin{eqnarray*}
+	\sum_{s'=1}^nP(s'|s,1)V^{\star}(s') &>& \sum_{s'=1}^nP(s'|s,0)V^{\star}(s')\\
+	V(s) &>& v^{\star}
+\end{eqnarray*}
+
+For $\pi^{\star}(s) = 0$
+\begin{eqnarray*}
+	\sum_{s'=1}^nP(s'|s,0)V^{\star}(s') &\ge& \sum_{s'=1}^nP(s'|s,1)V^{\star}(s')\\
+	V(s) &\le& v^{\star}
+\end{eqnarray*}
+
+Thus $\theta = v^\star$
+
+\subsection*{7.7 Stochastic approximation}
+\subparagraph*{(a)}
+\begin{eqnarray*}
+	\sum_{k=1}^{\infty} \alpha_k &=& 1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \frac{1}{5} + ... + \frac{1}{8} + ...\\
+	&>& 1 + \frac{1}{2} + (\frac{1}{4} + \frac{1}{4}) + (\frac{1}{8} + \frac{1}{8} + \frac{1}{8} + \frac{1}{8}) + ...\\
+	&=& 1 + \frac{1}{2} + \frac{1}{2} + \frac{1}{2} + ...\\
+	&=& \infty
+\end{eqnarray*}
+
+\begin{eqnarray*}
+	\sum_{k=1}^{\infty} \alpha_k^2 &=& 1 + \frac{1}{2 \times 2} + \frac{1}{3 \times 3}  + \frac{1}{4 \times 4} + ...\\
+	&<& 1 + \frac{1}{1 \times 2} + + \frac{1}{2 \times 3} + + \frac{1}{3 \times 4} + ...\\
+	&=& 1 + (1 - \frac{1}{2}) + (\frac{1}{2} - \frac{1}{3}) + (\frac{1}{3} - \frac{1}{4}) + ...\\
+	&<& 2 
+\end{eqnarray*}
+
+\subparagraph*{(b)}
+Suppose $\mu_k = (1/k) (x_1 + x_2 + ... + x_k)$ is true, then
+\begin{eqnarray*}
+	\mu_{k+1} &=& \mu_k + \frac{1}{k+1}(x_{k+1} - \mu_k)\\
+	&=& (1/k) (x_1 + x_2 + ... + x_k) + \frac{1}{k+1} [x_{k+1} - (1/k) (x_1 + x_2 + ... + x_k)]\\
+	&=& (\frac{1}{k} - \frac{1}{k(k+1)})(x_1 + x_2 + ... + x_k) + \frac{1}{k+1} x_{k+1}\\
+	&=& \frac{1}{k+1}(x_1 + x_2 + ... + x_k + x_{k+1})
+\end{eqnarray*}
+
+And we have $\mu_1 = x_1$
+\end{document}
+
+
+
