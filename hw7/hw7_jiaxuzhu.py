@@ -99,16 +99,14 @@ def policyIteration():
     trans = getTransP()
     v = [0.0] * sNum
     pi = [0] * sNum
-    for iter in range(5):
+    for iter in range(20):
         p = np.zeros((sNum, sNum))
         for i in range(sNum):
             for j in range(sNum):
-                p[j,i] = trans[pi[i]][j][i]
-            p = p *gamma
-        v = np.linalg.inv(np.identity(sNum) - p) * np.matrix(reward).transpose()
+                p[i,j] = trans[pi[i]][i][j]
+        p = p *gamma
+        v = np.linalg.inv(np.identity(sNum,  dtype=float) - p) * np.matrix(reward).transpose()
         for i in range(sNum):
-            if i == 69:
-                debug = 1
             maxValue = float("-inf")
             for a in range(4):
                 tmp = 0
